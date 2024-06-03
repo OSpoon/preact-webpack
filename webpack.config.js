@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   mode: "development",
-  entry: "./src/index.js",
+  entry: "./src/index.jsx",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
@@ -18,7 +18,13 @@ module.exports = {
           options: {
             presets: [
               ["@babel/preset-env", { targets: "defaults" }],
-              ["@babel/preset-react", { pragma: "h", pragmaFrag: "Fragment" }],
+              ["@babel/preset-react", { runtime: "automatic" }],
+            ],
+            plugins: [
+              [
+                "@babel/plugin-transform-react-jsx",
+                { runtime: "automatic", importSource: "preact" },
+              ],
             ],
           },
         },
