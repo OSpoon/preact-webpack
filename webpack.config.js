@@ -18,19 +18,23 @@ module.exports = {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
-          loader: require.resolve('babel-loader'),
+          loader: require.resolve('swc-loader'),
           options: {
-            presets: [
-              ["@babel/preset-env", { targets: "defaults" }],
-              ["@babel/preset-react", { runtime: "automatic" }],
-            ],
-            plugins: [
-              [
-                "@babel/plugin-transform-react-jsx",
-                { runtime: "automatic", importSource: "preact" },
-              ],
-              isDevelopment && require.resolve('react-refresh/babel')
-            ].filter(Boolean),
+            jsc: {
+              parser: {
+                syntax: 'ecmascript', // 'typescript' 如果你使用 TypeScript
+                jsx: true,
+                dynamicImport: true,
+              },
+              transform: {
+                react: {
+                  runtime: 'automatic',
+                  importSource: 'react',
+                  development: isDevelopment,
+                  refresh: isDevelopment,
+                },
+              },
+            },
           },
         },
       },
@@ -38,8 +42,10 @@ module.exports = {
   },
   resolve: {
     alias: {
-      react: "preact/compat",
-      "react-dom": "preact/compat",
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat', // 必须放在 test-utils 下面
+      'react/jsx-runtime': 'preact/jsx-runtime'
     },
     extensions: [".js", ".jsx"],
   },
@@ -56,9 +62,6 @@ module.exports = {
     compress: true,
     port: 9000,
     open: true,
-    hot: true,
-    client: { 
-      overlay: false 
-    },
+    hot: "only",
   },
 };
