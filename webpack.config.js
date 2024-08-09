@@ -1,8 +1,12 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
+/**
+ * @type import('webpack').Configuration
+ */
 module.exports = {
-  mode: "development",
+  mode: isDevelopment ? 'development' : 'production',
   entry: "./src/index.jsx",
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -11,10 +15,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: require.resolve('babel-loader'),
           options: {
             presets: [
               ["@babel/preset-env", { targets: "defaults" }],
@@ -25,7 +29,8 @@ module.exports = {
                 "@babel/plugin-transform-react-jsx",
                 { runtime: "automatic", importSource: "preact" },
               ],
-            ],
+              isDevelopment && require.resolve('react-refresh/babel')
+            ].filter(Boolean),
           },
         },
       },
@@ -39,10 +44,11 @@ module.exports = {
     extensions: [".js", ".jsx"],
   },
   plugins: [
+    isDevelopment && new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
-  ],
+  ].filter(Boolean),
   devServer: {
     static: {
       directory: path.join(__dirname, "dist"),
@@ -50,5 +56,9 @@ module.exports = {
     compress: true,
     port: 9000,
     open: true,
+    hot: true,
+    client: { 
+      overlay: false 
+    },
   },
 };
