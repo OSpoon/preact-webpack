@@ -20,7 +20,14 @@ module.exports = {
         use: {
           loader: require.resolve('swc-loader'),
           options: {
+            sync: true,
+            module: {
+              type: 'es6'
+            },
+            minify: !isDevelopment,
+            isModule: true,
             jsc: {
+              target: 'es2016',
               parser: {
                 syntax: 'ecmascript', // 'typescript' 如果你使用 TypeScript
                 jsx: true,
@@ -50,18 +57,32 @@ module.exports = {
     extensions: [".js", ".jsx"],
   },
   plugins: [
-    isDevelopment && new ReactRefreshWebpackPlugin(),
+    isDevelopment && new (require('@pmmmwh/react-refresh-webpack-plugin'))(),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
   ].filter(Boolean),
   devServer: {
-    static: {
-      directory: path.join(__dirname, "dist"),
-    },
+    host: '127.0.0.1',
+    allowedHosts: 'all',
+    static: path.join(__dirname, "dist"),
     compress: true,
-    port: 9000,
-    open: true,
-    hot: "only",
+    devMiddleware: {
+      writeToDisk: true
+    },
+    watchFiles: undefined,
+    client: {
+      logging: isDevelopment === 'development' ? 'error' : 'none',
+      progress: false,
+      overlay: {
+        errors: false,
+        warnings: false
+      }
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
+    port: 'auto',
+    hot: 'only'
   },
 };
