@@ -1,4 +1,5 @@
 const path = require("path");
+const PreactRefreshPlugin = require('@prefresh/webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
@@ -25,6 +26,7 @@ module.exports = {
                 "@babel/plugin-transform-react-jsx",
                 { runtime: "automatic", importSource: "preact" },
               ],
+              require.resolve("@prefresh/babel-plugin"),
             ],
           },
         },
@@ -39,6 +41,7 @@ module.exports = {
     extensions: [".js", ".jsx"],
   },
   plugins: [
+    new PreactRefreshPlugin(),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
