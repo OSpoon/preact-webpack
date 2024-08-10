@@ -1,7 +1,14 @@
-const App = () => (
-  <div>
-    <h1>Hello, Preact!</h1>
-  </div>
-);
+import CounterComp from "./components/CounterComp";
+import HelloComp from "./components/HelloComp";
+
+const App = () => {
+
+  return (
+    <div>
+      <HelloComp></HelloComp>
+      <CounterComp></CounterComp>
+    </div>
+  );
+}
 
 export default App;
